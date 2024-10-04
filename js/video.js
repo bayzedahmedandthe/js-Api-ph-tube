@@ -7,7 +7,32 @@ function getTimeString(time){
     }
 
 // categories functionals
-
+// {
+//     "status": true,
+//     "message": "successfully fetched all the categories",
+//     "categories": [
+//       {
+//         "category_id": "1001",
+//         "category": "Music"
+//       },
+//       {
+//         "category_id": "1003",
+//         "category": "Comedy"
+//       },
+//       {
+//         "category_id": "1005",
+//         "category": "Drawing"
+//       }
+//     ]
+//   }
+const loadCategoriesVideos = (id) => {
+    alert(id);
+    const url = (`https://openapi.programming-hero.com/api/phero-tube/category/${id}`);
+    fetch(url)
+        .then(respons => respons.json())
+        .then(data =>displayVideos(data.category))
+        .catch(error => console.log(error))
+}
 const loadCategories = () => {
     const url = ('https://openapi.programming-hero.com/api/phero-tube/categories');
     fetch(url)
@@ -19,10 +44,15 @@ const loadCategories = () => {
 const displayCategories = (categories) => {
     const categorieyContainer = document.getElementById('categories-container');
     categories.forEach(item => {
-        const button = document.createElement('button');
-        button.classList.add('btn')
-        button.innerText = item.category;
-        categorieyContainer.appendChild(button)
+        const buttonContasiner = document.createElement('div');
+        buttonContasiner.innerHTML = 
+        `<button onclick="loadCategoriesVideos(${item.category_id})" class="btn">
+        ${item.category}
+        </button>
+        
+        `
+        categorieyContainer.appendChild(buttonContasiner);
+        
     });
 }
 
@@ -54,8 +84,23 @@ const loadVideo = () => {
 }
 
 const displayVideos = (video) => {
-
-    const cardsSection = document.getElementById('card-section')
+    const cardsSection = document.getElementById('card-section');
+    cardsSection.innerHTML = "";
+    if(video.length === 0){
+        cardsSection.classList.remove('grid')
+        cardsSection.innerHTML = 
+        `<div class="flex justify-center mx-auto items-center py-4">
+        <img src="./assets/icon.png" />
+        
+        </div>
+        <p class="flex justify-center text-4xl font-bold">Opps!! Sorry, There is no content here</p>
+        
+        `
+        return;
+    }
+    else{
+        cardsSection.classList.add('grid')  
+    }
     video.forEach(item => {
         console.log(item);
         const card = document.createElement('div');
@@ -66,7 +111,7 @@ const displayVideos = (video) => {
     src=${item.thumbnail}
      class ="h-full w-full object-cover"   
      alt="Shoes" />
-     ${item.others.posted_date?.length === 0 ? "" : `<p class="absolute bg-black rounded-md px-2 right-2 bottom-2 text-white">${getTimeString(item.others.posted_date)}</p>` }
+     ${item.others.posted_date?.length === 0 ? "" : `<p class="absolute bg-black rounded-md px-2 text-xs right-2 bottom-2 text-white">${getTimeString(item.others.posted_date)}</p>` }
     
   </figure>
   <div class="px-0 py-3 flex items-center gap-6">
